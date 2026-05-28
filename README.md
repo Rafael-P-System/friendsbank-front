@@ -1,73 +1,74 @@
-# React + TypeScript + Vite
+# 💳 Friends Bank - Front-End (Premium Web Application)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+O **Friends Bank** é uma aplicação web bancária exclusiva com um design sofisticado e interface premium inspirada em cartões Gold/Vip. O projeto foi desenvolvido em React utilizando Vite e estilizado com Tailwind CSS, proporcionando uma experiência de usuário (UX) fluida, moderna e totalmente responsiva.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🚀 Demonstração Online
 
-## React Compiler
+A aplicação está hospedada e disponível para testes na Vercel! Você pode interagir com o sistema simulado diretamente pelo link abaixo:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+👉 **[Acesse o Friends Bank na Vercel](SUBSTITUA_PELO_SEU_LINK_DA_VERCEL)**
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## ✨ Funcionalidades do Dashboard (Ambiente Simulado)
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+Para viabilizar a visualização pública e segura do portfólio na nuvem, esta versão gerencia as operações diretamente no estado do componente (`useState`), operando de forma 100% interativa sem dependências externas:
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+* **🔒 Autenticação Exclusiva:** Tela de login para acesso à área VIP.
+* **💸 Envio de Pix:** Simulação de transferências digitando chaves Pix ou QR Codes, atualizando o saldo instantaneamente.
+* **📄 Pagamento de Boletos:** Linha digitável de código de barras para quitação de faturas de consumo.
+* **📊 Extrato em Tempo Real:** Histórico dinâmico e consolidado das transações financeiras realizadas na sessão.
+* **💳 Visualização Premium:** Componente visual interativo simulando um cartão Mastercard Gold personalizado com o nome do titular e número de conta.
+* **📈 Crédito Pré-Aprovado:** Seção especial para simulação de empréstimo pessoal com taxas Gold exclusivas.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+---
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🛠️ Tecnologias Utilizadas
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+O ecossistema de desenvolvimento do front-end conta com ferramentas modernas do mercado de software:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+* **React** (Biblioteca para construção da interface declarativa)
+* **TypeScript** (Tipagem estática para maior segurança e robustez do código)
+* **Vite** (Build tool ultrarrápido para desenvolvimento local moderno)
+* **Tailwind CSS** (Framework utilitário para estilização avançada e transições fluidas)
+* **Lucide React** (Pacote de ícones minimalistas e modernos)
+
+---
+
+## 📦 Como rodar o projeto localmente
+
+Caso queira clonar este repositório e executá-lo em sua máquina, siga os passos abaixo:
+
+1. **Clone o repositório:**
+   ```bash
+   git clone [https://github.com/Rafael-P-System/NOME_DESTE_REPOSITORIO.git](https://github.com/Rafael-P-System/NOME_DESTE_REPOSITORIO.git)
+Acesse a pasta do projeto:
+
+Bash
+cd friendsbank-front
+Instale as dependências:
+
+Bash
+npm install
+Inicie o servidor de desenvolvimento local:
+
+Bash
+npm run dev
+Acesse no navegador:
+O terminal gerará um link local, geralmente disponível em http://localhost:5173.
+
+📁 Organização dos Módulos (Arquitetura)
+Plaintext
+src/
+├── Components/    # Componentes globais e estruturais do layout
+├── Sceens/        # Telas completas da aplicação (Login, Dashboard)
+├── Types/         # Definições de interfaces e tipos TypeScript
+├── api/           # Configurações de serviços e conexões de rede (Axios)
+├── App.tsx        # Componente raiz e gerenciador de rotas internas
+└── main.tsx       # Ponto de entrada da aplicação
+👤 Autor
+Rafael Pimentel da Silva - Desenvolvedor do Projeto - Meu GitHub
+
+Developed with 💛 for Portfolio.
