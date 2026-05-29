@@ -8,7 +8,7 @@ O **Friends Bank** é uma aplicação web bancária exclusiva com um design sofi
 
 A aplicação está hospedada e disponível para testes na Vercel! Você pode interagir com o sistema simulado diretamente pelo link abaixo:
 
-👉 **[Acesse o Friends Bank na Vercel](SUBSTITUA_PELO_SEU_LINK_DA_VERCEL)**
+👉 **[Acesse o Friends Bank na Vercel]https://friendsbank-front.vercel.app/
 
 ---
 
