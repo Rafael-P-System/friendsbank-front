@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { UsuarioLogado } from '../Types/auth';
+import api from '../API/api';
 
 interface DashboardScreenProps {
   usuario: UsuarioLogado;
@@ -14,23 +15,87 @@ interface Transacao {
   descricao: string;
   valor: number;
   data: string;
+  tipo: 'ENTRADA' | 'SAIDA';
 }
 
 export default function DashboardScreen({ usuario, onLogout }: DashboardScreenProps) {
   const [aba, setAba] = useState<AbaAtual>('INICIO');
   const [subTela, setSubTela] = useState<SubTelaInicio>('MENU');
 
-  // Helper para alternar abas e resetar sub-telas
+  // Estados para os inputs dos formulários
+  const [destino, setDestino] = useState('');
+  const [valorTransacao, setValorTransacao] = useState('');
+  const [carregando, setCarregando] = useState(false);
+
+  // Estados dinâmicos de saldo e extrato iniciados com os dados do usuário logado
+  const [saldoAtual, setSaldoAtual] = useState<number>(usuario.saldo);
+  const [saldoInvestimento] = useState<number>(500.00);
+  const [historicoExtrato, setHistoricoExtrato] = useState<Transacao[]>([
+    { id: 1, descricao: 'Depósito Inicial Pró-Gold', valor: usuario.saldo, data: new Date().toLocaleDateString('pt-BR'), tipo: 'ENTRADA' }
+  ]);
+
+  // Helper para alternar abas e resetar formulários
   const trocarAba = (novaAba: AbaAtual) => {
     setAba(novaAba);
     setSubTela('MENU');
+    setDestino('');
+    setValorTransacao('');
   };
 
-  const [saldoAtual] = useState<number>(usuario.saldo);
-  const [saldoInvestimento] = useState<number>(500.00);
-  const [historicoExtrato] = useState<Transacao[]>([
-    { id: 1, descricao: 'Depósito Inicial Pró-Gold', valor: usuario.saldo, data: new Date().toLocaleDateString('pt-BR') }
-  ]);
+  // Função que conecta com o backend Java seguro contra concorrência
+  const executarTransferencia = async () => {
+    const valorNum = parseFloat(valorTransacao);
+
+    if (!destino || isNaN(valorNum) || valorNum <= 0) {
+      alert('Por favor, preencha todos os campos com valores válidos.');
+      return;
+    }
+
+    if (valorNum > saldoAtual) {
+      alert('Saldo insuficiente para realizar essa operação.');
+      return;
+    }
+
+    setCarregando(true);
+
+    try {
+      // Dispara o POST usando a baseURL configurada ('/api/friendsbank/transferir')
+      const response = await api.post('/transferir', {
+        numeroOrigem: usuario.numero,
+        numeroDestino: destino,
+        valor: valorNum
+      });
+
+      // Sucesso! Atualiza o estado da tela localmente
+      setSaldoAtual((prev) => prev - valorNum);
+      
+      const novaTransacao: Transacao = {
+        id: Date.now(),
+        descricao: subTela === 'PIX' ? `Pix enviado para conta ${destino}` : `Boleto pago: ${destino.substring(0, 5)}...`,
+        valor: valorNum,
+        data: new Date().toLocaleDateString('pt-BR'),
+        tipo: 'SAIDA'
+      };
+
+      setHistoricoExtrato((prev) => [novaTransacao, ...prev]);
+      alert(response.data); // Mensagem de sucesso vinda do Java
+
+      // Reseta a tela
+      setSubTela('MENU');
+      setDestino('');
+      setValorTransacao('');
+
+    } catch (error: any) {
+      // Exibe a mensagem de erro vinda do ContaService (ex: "Conta de destino não encontrada")
+      if (error.response && error.response.data) {
+        alert(`Erro na transação: ${error.response.data}`);
+      } else {
+        alert('Erro ao conectar com o servidor do FriendsBank.');
+      }
+    } finally {
+      setCarregando(false);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -89,7 +154,9 @@ export default function DashboardScreen({ usuario, onLogout }: DashboardScreenPr
                 {historicoExtrato.map((item) => (
                   <div key={item.id} className="bg-[#1C1C1C] p-3 rounded-xl flex justify-between border border-gray-800">
                     <p className="text-white text-sm">{item.descricao}</p>
-                    <span className="text-green-400 font-mono">R$ {item.valor.toFixed(2)}</span>
+                    <span className={item.tipo === 'ENTRADA' ? "text-green-400 font-mono" : "text-red-400 font-mono"}>
+                      {item.tipo === 'ENTRADA' ? '+' : '-'} R$ {item.valor.toFixed(2)}
+                    </span>
                   </div>
                 ))}
               </>
@@ -97,9 +164,29 @@ export default function DashboardScreen({ usuario, onLogout }: DashboardScreenPr
               <div className="bg-[#111] p-6 rounded-xl border border-[#D4AF37]/20 animate-fadeIn">
                 <button onClick={() => setSubTela('MENU')} className="text-[#D4AF37] text-xs mb-4 underline">← Voltar para o Extrato</button>
                 <h3 className="text-white font-bold mb-4">{subTela === 'PIX' ? 'Nova Transferência Pix' : 'Pagamento de Boleto'}</h3>
-                <input type="text" placeholder={subTela === 'PIX' ? "Chave Pix" : "Código de Barras"} className="w-full bg-black border border-gray-700 p-3 rounded-lg text-white mb-3" />
-                <input type="number" placeholder="Valor (R$)" className="w-full bg-black border border-gray-700 p-3 rounded-lg text-white mb-4" />
-                <button className="w-full bg-[#D4AF37] text-black font-bold py-3 rounded-lg">Confirmar {subTela}</button>
+                
+                {/* Inputs Controlados */}
+                <input 
+                  type="text" 
+                  value={destino}
+                  onChange={(e) => setDestino(e.target.value)}
+                  placeholder={subTela === 'PIX' ? "Número da Conta de Destino" : "Código de Barras"} 
+                  className="w-full bg-black border border-gray-700 p-3 rounded-lg text-white mb-3 focus:border-[#D4AF37] outline-none" 
+                />
+                <input 
+                  type="number" 
+                  value={valorTransacao}
+                  onChange={(e) => setValorTransacao(e.target.value)}
+                  placeholder="Valor (R$)" 
+                  className="w-full bg-black border border-gray-700 p-3 rounded-lg text-white mb-4 focus:border-[#D4AF37] outline-none" 
+                />
+                
+                <button 
+                  onClick={executarTransferencia}
+                  disabled={carregando}
+                  className="w-full bg-[#D4AF37] text-black font-bold py-3 rounded-lg hover:opacity-90 transition-all disabled:opacity-50">
+                  {carregando ? 'Processando Seguradora...' : `Confirmar ${subTela}`}
+                </button>
               </div>
             )}
           </div>
