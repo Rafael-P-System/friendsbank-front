@@ -53,7 +53,8 @@ export default function LoginScreen({ onLogin, onMudarTela }: LoginScreenProps) 
         </div>
       </div>
 
-      <button type="submit" className="w-full bg-linear-to-r from-[#AA771C] via-[#D4AF37] to-[#B38728] text-black font-bold py-3.5 rounded-xl shadow-[0_4px_20px_rgba(212,175,55,0.25)] hover:opacity-90 active:scale-[0.99] transition-all">
+      {/* 🔹 AJUSTE DE SEGURANÇA: Alterado de 'bg-linear-to-r' para 'bg-gradient-to-r' para garantir o disparo estável do formulário */}
+      <button type="submit" className="w-full bg-gradient-to-r from-[#AA771C] via-[#D4AF37] to-[#B38728] text-black font-bold py-3.5 rounded-xl shadow-[0_4px_20px_rgba(212,175,55,0.25)] hover:opacity-90 active:scale-[0.99] transition-all">
         Acessar Conta Gold
       </button>
 
